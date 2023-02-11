@@ -31,6 +31,7 @@ SELECT stock_name, SUM(
 FROM Stocks
 GROUP BY stock_name
 
+
 -- 176. Second Highest Salary --
 
 Example 1:
@@ -87,3 +88,76 @@ SELECT IFNULL(
     ORDER BY Salary DESC
     LIMIT 1 OFFSET 1), NULL
 ) AS SecondHighestSalary
+
+
+-- 608. Tree Node --
+
+Input: 
+Tree table:
++----+------+
+| id | p_id |
++----+------+
+| 1  | null |
+| 2  | 1    |
+| 3  | 1    |
+| 4  | 2    |
+| 5  | 2    |
++----+------+
+Output: 
++----+-------+
+| id | type  |
++----+-------+
+| 1  | Root  |
+| 2  | Inner |
+| 3  | Leaf  |
+| 4  | Leaf  |
+| 5  | Leaf  |
++----+-------+
+
+-- My Approach --
+SELECT id,
+CASE
+    WHEN p_id IS NULL THEN 'Root'
+    WHEN id IN (SELECT p_id FROM Tree) THEN 'Inner'
+    ELSE 'Leaf'
+END AS type
+FROM Tree
+
+-- 1873. Calculate Special Bonus --
+Example 1:
+
+Input: 
+Employees table:
++-------------+---------+--------+
+| employee_id | name    | salary |
++-------------+---------+--------+
+| 2           | Meir    | 3000   |
+| 3           | Michael | 3800   |
+| 7           | Addilyn | 7400   |
+| 8           | Juan    | 6100   |
+| 9           | Kannon  | 7700   |
++-------------+---------+--------+
+Output: 
++-------------+-------+
+| employee_id | bonus |
++-------------+-------+
+| 2           | 0     |
+| 3           | 0     |
+| 7           | 7400  |
+| 8           | 0     |
+| 9           | 7700  |
++-------------+-------+
+Explanation: 
+The employees with IDs 2 and 8 get 0 bonus because they have an even employee_id.
+The employee with ID 3 gets 0 bonus because their name starts with 'M'.
+The rest of the employees get a 100% bonus.
+
+-- Solution: --
+
+ SELECT employee_id,
+ CASE
+    WHEN employee_id % 2 != 0 AND name NOT LIKE 'M%' THEN salary
+    ELSE 0
+ END AS bonus
+ FROM Employees
+ ORDER BY employee_id
