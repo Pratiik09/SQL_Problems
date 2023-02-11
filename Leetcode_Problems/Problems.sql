@@ -167,3 +167,86 @@ SELECT  employee_id,
     salary * ( employee_id % 2 ) * ( name NOT LIKE 'M%') AS bonus
 FROM Employees
 ORDER BY employee_id
+
+
+-- 627. Swap Salary --
+Swap all 'f' and 'm' values (i.e., change all 'f' values to 'm' and vice versa)
+
+Example 1:
+
+Input: 
+Salary table:
++----+------+-----+--------+
+| id | name | sex | salary |
++----+------+-----+--------+
+| 1  | A    | m   | 2500   |
+| 2  | B    | f   | 1500   |
+| 3  | C    | m   | 5500   |
+| 4  | D    | f   | 500    |
++----+------+-----+--------+
+Output: 
++----+------+-----+--------+
+| id | name | sex | salary |
++----+------+-----+--------+
+| 1  | A    | f   | 2500   |
+| 2  | B    | m   | 1500   |
+| 3  | C    | f   | 5500   |
+| 4  | D    | m   | 500    |
++----+------+-----+--------+
+Explanation: 
+(1, A) and (3, C) were changed from 'm' to 'f'.
+(2, B) and (4, D) were changed from 'f' to 'm'.
+
+-- My Approach --
+UPDATE Salary
+SET sex = CASE 
+            WHEN sex = 'm' THEN 'f'
+            ELSE 'm'
+          END
+
+-- Other Approach --
+UPDATE Salary
+SET sex = IF(sex='f','m','f')
+
+
+-- 196. Delete Duplicate Emails --
+Example 1:
+
+Input: 
+Person table:
++----+------------------+
+| id | email            |
++----+------------------+
+| 1  | john@example.com |
+| 2  | bob@example.com  |
+| 3  | john@example.com |
++----+------------------+
+Output: 
++----+------------------+
+| id | email            |
++----+------------------+
+| 1  | john@example.com |
+| 2  | bob@example.com  |
++----+------------------+
+Explanation: john@example.com is repeated two times. We keep the row with the smallest Id = 1.
+
+-- My Approach --
+DELETE FROM Person
+WHERE id IN (
+    SELECT id
+    FROM (
+        SELECT id, email,
+            ROW_NUMBER() OVER(PARTITION BY email ORDER BY id) AS RN
+        FROM Person
+    ) AS TEMPA WHERE RN > 1
+)
+
+-- Other Approach --
+-- Oracle, Didn't work on MySQL --
+DELETE FROM Person
+WHERE (email, id) NOT IN (
+    SELECT email, MIN(id)
+    FROM Person
+    GROUP BY email
+)
+
