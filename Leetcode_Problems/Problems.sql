@@ -153,11 +153,17 @@ The employee with ID 3 gets 0 bonus because their name starts with 'M'.
 The rest of the employees get a 100% bonus.
 
 -- Solution: --
+-- My Approach --
+SELECT employee_id,
+CASE
+WHEN employee_id % 2 != 0 AND name NOT LIKE 'M%' THEN salary
+ELSE 0
+END AS bonus
+FROM Employees
+ORDER BY employee_id
 
- SELECT employee_id,
- CASE
-    WHEN employee_id % 2 != 0 AND name NOT LIKE 'M%' THEN salary
-    ELSE 0
- END AS bonus
- FROM Employees
- ORDER BY employee_id
+-- Other Approach --
+SELECT  employee_id, 
+    salary * ( employee_id % 2 ) * ( name NOT LIKE 'M%') AS bonus
+FROM Employees
+ORDER BY employee_id
