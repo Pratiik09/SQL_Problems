@@ -250,3 +250,87 @@ WHERE (email, id) NOT IN (
     GROUP BY email
 )
 
+-- 1667. Fix Names in a Table --
+Example 1:
+
+Input: 
+Users table:
++---------+-------+
+| user_id | name  |
++---------+-------+
+| 1       | aLice |
+| 2       | bOB   |
++---------+-------+
+Output: 
++---------+-------+
+| user_id | name  |
++---------+-------+
+| 1       | Alice |
+| 2       | Bob   |
++---------+-------+
+
+-- My Approach --
+SELECT user_id, CONCAT( UPPER(SUBSTRING(name, 1, 1)), LOWER(SUBSTRING(name, 2, LENGTH(name))) ) AS name
+FROM Users
+ORDER BY user_id
+
+-- 1484. Group Sold Products By The Date --
+Input: 
+Activities table:
++------------+------------+
+| sell_date  | product     |
++------------+------------+
+| 2020-05-30 | Headphone  |
+| 2020-06-01 | Pencil     |
+| 2020-06-02 | Mask       |
+| 2020-05-30 | Basketball |
+| 2020-06-01 | Bible      |
+| 2020-06-02 | Mask       |
+| 2020-05-30 | T-Shirt    |
++------------+------------+
+Output: 
++------------+----------+------------------------------+
+| sell_date  | num_sold | products                     |
++------------+----------+------------------------------+
+| 2020-05-30 | 3        | Basketball,Headphone,T-shirt |
+| 2020-06-01 | 2        | Bible,Pencil                 |
+| 2020-06-02 | 1        | Mask                         |
++------------+----------+------------------------------+
+Explanation: 
+For 2020-05-30, Sold items were (Headphone, Basketball, T-shirt), we sort them lexicographically and separate them by a comma.
+For 2020-06-01, Sold items were (Pencil, Bible), we sort them lexicographically and separate them by a comma.
+For 2020-06-02, the Sold item is (Mask), we just return it.
+
+-- My Approach after Help --
+SELECT 
+    sell_date, COUNT(DISTINCT product) AS num_sold,
+    GROUP_CONCAT(DISTINCT product ORDER BY product ASC SEPARATOR ",") AS products
+FROM Activities
+GROUP BY sell_date
+ORDER BY sell_date ASC
+
+--  1527. Patients With a Condition --
+Input: 
+Patients table:
++------------+--------------+--------------+
+| patient_id | patient_name | conditions   |
++------------+--------------+--------------+
+| 1          | Daniel       | YFEV COUGH   |
+| 2          | Alice        |              |
+| 3          | Bob          | DIAB100 MYOP |
+| 4          | George       | ACNE DIAB100 |
+| 5          | Alain        | DIAB201      |
++------------+--------------+--------------+
+Output: 
++------------+--------------+--------------+
+| patient_id | patient_name | conditions   |
++------------+--------------+--------------+
+| 3          | Bob          | DIAB100 MYOP |
+| 4          | George       | ACNE DIAB100 | 
++------------+--------------+--------------+
+Explanation: Bob and George both have a condition that starts with DIAB1.
+
+-- With REGEXP --
+SELECT *
+FROM Patients
+WHERE conditions REGEXP '\\bDIAB1'
