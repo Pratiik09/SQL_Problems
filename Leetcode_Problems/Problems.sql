@@ -334,3 +334,106 @@ Explanation: Bob and George both have a condition that starts with DIAB1.
 SELECT *
 FROM Patients
 WHERE conditions REGEXP '\\bDIAB1'
+
+
+-- 1965. Employees With Missing Information --
+Input: 
+Employees table:
++-------------+----------+
+| employee_id | name     |
++-------------+----------+
+| 2           | Crew     |
+| 4           | Haven    |
+| 5           | Kristian |
++-------------+----------+
+Salaries table:
++-------------+--------+
+| employee_id | salary |
++-------------+--------+
+| 5           | 76071  |
+| 1           | 22517  |
+| 4           | 63539  |
++-------------+--------+
+Output: 
++-------------+
+| employee_id |
++-------------+
+| 1           |
+| 2           |
++-------------+
+Explanation: 
+Employees 1, 2, 4, and 5 are working at this company.
+The name of employee 1 is missing.
+The salary of employee 2 is missing.
+
+-- My Approach --
+WITH INTERSECTT AS (
+    SELECT employee_id
+    FROM Employees
+    WHERE employee_id IN (
+        SELECT employee_id
+        FROM Salaries )
+), UNIONT AS (
+    SELECT employee_id
+    FROM Employees
+    UNION
+    SELECT employee_id
+    FROM Salaries
+)
+SELECT employee_id
+FROM UNIONT
+WHERE employee_id NOT IN (
+    SELECT employee_id
+    FROM INTERSECTT
+)
+ORDER BY 1 
+
+
+-- 1795. Rearrange Products Table --
+Input: 
+Products table:
++------------+--------+--------+--------+
+| product_id | store1 | store2 | store3 |
++------------+--------+--------+--------+
+| 0          | 95     | 100    | 105    |
+| 1          | 70     | null   | 80     |
++------------+--------+--------+--------+
+Output: 
++------------+--------+-------+
+| product_id | store  | price |
++------------+--------+-------+
+| 0          | store1 | 95    |
+| 0          | store2 | 100   |
+| 0          | store3 | 105   |
+| 1          | store1 | 70    |
+| 1          | store3 | 80    |
++------------+--------+-------+
+Explanation: 
+Product 0 is available in all three stores with prices 95, 100, and 105 respectively.
+Product 1 is available in store1 with price 70 and store3 with price 80. The product is not available in store2.
+
+-- My Approach after Help --
+SELECT 
+    product_id,
+    'store1' AS store,
+    store1 AS price
+FROM Products
+WHERE store1 IS NOT NULL
+
+UNION
+
+SELECT 
+    product_id,
+    'store2' AS store,
+    store2 AS price
+FROM Products
+WHERE store2 IS NOT NULL
+
+UNION
+
+SELECT 
+    product_id,
+    'store3' AS store,
+    store3 AS price
+FROM Products
+WHERE store3 IS NOT NULL
