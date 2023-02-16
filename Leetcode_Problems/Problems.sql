@@ -420,7 +420,7 @@ SELECT
 FROM Products
 WHERE store1 IS NOT NULL
 
-UNION
+UNION 
 
 SELECT 
     product_id,
@@ -437,3 +437,58 @@ SELECT
     store3 AS price
 FROM Products
 WHERE store3 IS NOT NULL
+
+-- 197. Rising Temperature --
+Input: 
+Weather table:
++----+------------+-------------+
+| id | recordDate | temperature |
++----+------------+-------------+
+| 1  | 2015-01-01 | 10          |
+| 2  | 2015-01-02 | 25          |
+| 3  | 2015-01-03 | 20          |
+| 4  | 2015-01-04 | 30          |
++----+------------+-------------+
+Output: 
++----+
+| id |
++----+
+| 2  |
+| 4  |
++----+
+Explanation: 
+In 2015-01-02, the temperature was higher than the previous day (10 -> 25).
+In 2015-01-04, the temperature was higher than the previous day (20 -> 30).
+
+-- My Approach -- (Efficient)
+WITH LAGT AS (
+    SELECT
+        id, recordDate, temperature,
+        LAG(temperature) OVER( ORDER BY recordDate ASC ) AS PrevDayTemp,
+        LAG(recordDate) OVER( ORDER BY recordDate ASC ) AS PrevDate
+    FROM Weather
+)
+SELECT id
+FROM LAGT
+WHERE temperature > PrevDayTemp AND
+DATEDIFF(recordDate, PrevDate) = 1
+
+-- Other Approach -- (Not Efficient)
+SELECT CUR.id AS id
+FROM Weather CUR, Weather PREV  -- , (comma) means Cross Join
+WHERE DATEDIFF(CUR.recordDate, PREV.recordDate) = 1 AND
+CUR.temperature > PREV.temperature
+
+
+-- 607. Sales Person --
+-- My Approach After Help --
+SELECT name
+FROM SalesPerson
+WHERE sales_id NOT IN (
+    SELECT
+        sales_id
+    FROM Orders O
+    LEFT JOIN Company C
+    ON O.com_id = C.com_id
+    WHERE C.name = "RED"
+)
