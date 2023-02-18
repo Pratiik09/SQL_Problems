@@ -492,3 +492,71 @@ WHERE sales_id NOT IN (
     ON O.com_id = C.com_id
     WHERE C.name = "RED"
 )
+
+
+-- 1141. User Activity for the Past 30 Days I --
+-- My Approach --
+SELECT
+    activity_date AS day,
+    -- GROUP_CONCAT(user_id ORDER BY user_id),
+    COUNT(DISTINCT user_id) AS active_users 
+FROM Activity
+WHERE activity_date BETWEEN '2019-06-28' AND '2019-07-27'
+GROUP BY activity_date
+ORDER BY activity_date
+
+
+-- 1407. Top Travellers --
+Input: 
+Users table:
++------+-----------+
+| id   | name      |
++------+-----------+
+| 1    | Alice     |
+| 2    | Bob       |
+| 3    | Alex      |
+| 4    | Donald    |
+| 7    | Lee       |
+| 13   | Jonathan  |
+| 19   | Elvis     |
++------+-----------+
+Rides table:
++------+----------+----------+
+| id   | user_id  | distance |
++------+----------+----------+
+| 1    | 1        | 120      |
+| 2    | 2        | 317      |
+| 3    | 3        | 222      |
+| 4    | 7        | 100      |
+| 5    | 13       | 312      |
+| 6    | 19       | 50       |
+| 7    | 7        | 120      |
+| 8    | 19       | 400      |
+| 9    | 7        | 230      |
++------+----------+----------+
+Output: 
++----------+--------------------+
+| name     | travelled_distance |
++----------+--------------------+
+| Elvis    | 450                |
+| Lee      | 450                |
+| Bob      | 317                |
+| Jonathan | 312                |
+| Alex     | 222                |
+| Alice    | 120                |
+| Donald   | 0                  |
++----------+--------------------+
+Explanation: 
+Elvis and Lee traveled 450 miles, Elvis is the top traveler as his name is alphabetically smaller than Lee.
+Bob, Jonathan, Alex, and Alice have only one ride and we just order them by the total distances of the ride.
+Donald did not have any rides, the distance traveled by him is 0.
+
+-- My Approach --
+SELECT
+    U.name name,
+    IFNULL( SUM(R.distance), 0) travelled_distance
+FROM Users U
+LEFT JOIN Rides R
+ON R.user_id = U.id
+GROUP BY U.id
+ORDER BY travelled_distance DESC, U.name ASC
