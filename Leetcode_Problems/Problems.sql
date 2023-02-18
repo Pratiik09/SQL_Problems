@@ -560,3 +560,52 @@ LEFT JOIN Rides R
 ON R.user_id = U.id
 GROUP BY U.id
 ORDER BY travelled_distance DESC, U.name ASC
+
+
+-- 1158. Market Analysis I --
+-- Que: Find for each user, the join date and the number of orders they made as a buyer in 2019 --
+-- My Approach --
+SELECT
+    U.user_id buyer_id,
+    U.join_date join_date,
+    COUNT(
+        CASE
+            WHEN EXTRACT(YEAR FROM order_date) = '2019' THEN 1
+            ELSE NULL
+        END
+    ) orders_in_2019
+FROM Users U
+LEFT JOIN Orders O
+ON U.user_id = O.buyer_id
+GROUP BY 1, 2
+
+-- 1.Other Approach --
+SELECT
+    U.user_id buyer_id,
+    U.join_date join_date,
+    COUNT(order_date) orders_in_2019
+FROM Users U
+LEFT JOIN Orders O
+ON U.user_id = O.buyer_id
+AND EXTRACT(YEAR FROM order_date) = '2019'
+GROUP BY 1, 2
+
+
+-- 2.Other Approach --
+SELECT
+    U.user_id buyer_id,
+    U.join_date join_date,
+    COUNT(order_date) orders_in_2019
+FROM Users U
+LEFT JOIN (
+    SELECT *
+    FROM Orders
+    WHERE EXTRACT(YEAR FROM order_date) = '2019'
+) O
+ON U.user_id = O.buyer_id
+GROUP BY 1, 2
+
+### NOTE ###
+-- WHERE: Filter happens after the join
+-- ON with AND: Filter happens on specified table during the join, it is similar to using subquery to filter data before joining
+### 1.Other Approach and 2.Other Approach are same, but 1.Other Approach is more efficient --
