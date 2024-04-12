@@ -6,6 +6,19 @@ EmployeeID	StartDate	EndDate
 3	        2023-02-01	NULL
 4	        2023-08-01	2024-01-31
 
+-- Create Input
+CREATE TABLE EmployeeRecords (
+EmployeeID INT, StartDate DATE, EndDate DATE
+);
+
+INSERT INTO EmployeeRecords (EmployeeID, StartDate, EndDate)
+VALUES
+(1, '2023-01-01', '2023-06-30'),
+(1, '2023-07-01', '2023-12-31'),
+(2, '2023-04-15', '2023-10-15'),
+(3, '2023-02-01', NULL),
+(4, '2023-08-01', '2024-01-31');
+
 -- OUTPUT:
 EmployeeID	startdate	enddate
 1	        2023-01-01	2023-12-31
