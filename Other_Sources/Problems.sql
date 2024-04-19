@@ -93,3 +93,9 @@ SELECT
     ) AS rolling_avg
 FROM monthly_revenue
 ORDER BY year, month
+
+-- Output
+year,   month,  rolling_avg
+2024,   1,      10.000000
+2024,   2,      30.000000
+2024,   3,      26.666667
