@@ -99,3 +99,57 @@ year,   month,  rolling_avg
 2024,   1,      10.000000
 2024,   2,      30.000000
 2024,   3,      26.666667
+
+
+-- Question 3
+-- Find Student with 2nd Highest Mark in each Class
+CREATE TABLE School (
+    Class VARCHAR(25),
+    Student VARCHAR(25),
+    Subject VARCHAR(25),
+    Marks INT
+);
+
+INSERT INTO School (Class, Student, Subject, Marks)
+VALUES (1, 'Pratik', 'Maths', 25),
+       (1, 'Pratik', 'English', 30),
+       (2, 'Pratik', 'Maths', 30),
+       (2, 'Pratik', 'Marathi', 40),
+       (2, 'Ishika', 'Maths', 45),
+       (2, 'Ishika', 'History', 15),
+       (1, 'Mansi', 'Maths', 15),
+       (1, 'Mansi', 'English', 55),
+       (2, 'Mansi', 'Marathi', 10),
+       (2, 'Mansi', 'Maths', 30),
+       (2, 'Nitin', 'Maths', 20),
+       (2, 'Nitin', 'English', 40),
+       (1, 'Nitin', 'Maths', 24),
+       (1, 'Nitin', 'Hindi', 36);
+       
+-- Solution
+WITH TotalMarks AS (
+SELECT
+	Class,
+	Student,
+	SUM(Marks) AS TotalMrks
+FROM School
+GROUP BY Class, Student
+), Ranked AS (
+SELECT
+	Class,
+	Student,
+	TotalMrks,
+	DENSE_RANK() OVER(PARTITION BY Class ORDER BY TotalMrks DESC) AS RNo
+FROM TotalMarks
+)
+SELECT
+	Class,
+	Student
+FROM Ranked
+WHERE RNo = 2
+
+-- Output
+Class,  Student
+1,      Nitin
+2,      Ishika
+2,      Nitin
