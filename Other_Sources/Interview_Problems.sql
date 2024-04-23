@@ -101,7 +101,7 @@ year,   month,  rolling_avg
 2024,   3,      26.666667
 
 
--- Question 3
+-- Question 3 (Asked in Dr.Reddy's Staff Augmentation Interview)
 -- Find Student with 2nd Highest Mark in each Class
 CREATE TABLE School (
     Class VARCHAR(25),
@@ -153,3 +153,48 @@ Class,  Student
 1,      Nitin
 2,      Ishika
 2,      Nitin
+
+
+-- Question 3 (Asked in Panasonic Aviations Round 1)
+-- Find the number of calls made by Active Users in April 2024
+-- Input
+CREATE TABLE Users (
+  user_id INT,
+  date DATE,
+  call_id INT
+);
+
+CREATE TABLE Subscription (
+  user_id INT PRIMARY KEY,
+  status VARCHAR(255),
+  company VARCHAR(255)
+);
+
+INSERT INTO Users (user_id, date, call_id)
+VALUES (1, '2024-04-20', 100),
+       (1, '2024-04-21', 101),
+       (2, '2024-04-22', 102),
+       (3, '2024-04-23', 103),
+       (4, '2024-04-20', 104),
+       (4, '2024-04-22', 105);
+       
+INSERT INTO Subscription (user_id, status, company)
+VALUES (1, 'Active', 'Acme Corp.'),
+       (2, 'Free', 'None'),
+       (3, 'Inactive', 'Beta Ltd.'),
+       (4, 'Active', 'ZZZ Inc.');
+
+-- Output
+User_ID,No_Calls
+1,      2
+4,      2
+
+-- Solution
+SELECT
+	U.user_id AS User_ID,
+    COUNT(U.call_id) AS No_Calls
+FROM Users U
+INNER JOIN Subscription S
+ON U.user_id = S.user_id
+WHERE S.status = "Active" AND U.date BETWEEN '2024-04-01' AND '2024-04-30'
+GROUP BY U.user_id;
